@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ import javax.swing.JOptionPane;
  *
  * @author NICOLETTI A.
  */
-public class DataConnection {
+public class DataConnection implements Serializable{
 
     private String serverName;
     private String port;

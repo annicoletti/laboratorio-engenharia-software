@@ -1,17 +1,23 @@
 package br.com.textilregimara.model.entities;
 
+import java.io.Serializable;
+
 /**
  *
  * @author NICOLETTI A.
  */
-public class Usuario {
+public class Usuario implements Serializable{
     
     private Integer idUsuario;
-    private String nome;
-    private String usuario;
-    private String senha;
-    private Boolean administrador;
     
+    private String nome;
+    
+    private String usuario;
+    
+    private String senha;
+    
+    private Boolean administrador;    
+
     public Usuario(){};
 
     /**
@@ -79,5 +85,4 @@ public class Usuario {
     public String toString() {
         return "Usuario{" + "idUsuario=" + idUsuario + ", nome=" + nome + ", usuario=" + usuario + ", senha=" + senha + ", administrador=" + administrador + '}';
     }   
-
 }

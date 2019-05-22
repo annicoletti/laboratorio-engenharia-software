@@ -15,8 +15,11 @@ import java.sql.Connection;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import br.com.textilregimara.model.data.DataConnection;
-import static br.com.textilregimara.view.screen.TelaLogin.IMAGE_PATH;
 import java.awt.Toolkit;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  *
@@ -24,6 +27,7 @@ import java.awt.Toolkit;
  */
 public class TelaConfiguracaoSql extends javax.swing.JFrame {
 
+    private DataConnection dataConnection;
     /**
      * Creates new form configuracaoSql
      */
@@ -327,7 +331,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(TelaLogin.IMAGE_PATH + "icone.png")));
     }    
     
-    private void gravar() {
+    private void gravar(DataConnection obj) {
         JFileChooser chooser = new JFileChooser();
         chooser.showSaveDialog(this);
 
@@ -343,13 +347,10 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         if (file != null) {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
-                bw.write(jTextFieldServerName.getText() + ";");
-                bw.write(jTextFieldConnectPort.getText() + ";");
-                bw.write(jTextFieldPath.getText() + ";");
-                bw.write(jTextFieldDatabaseName.getText() + ";");
-                bw.write(jTextFieldUser.getText() + ";");
-                bw.write(jPasswordFieldPassword.getText());
-                bw.close();
+                
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+                out.writeObject(obj);
+                out.close();
                 JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso");
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
@@ -365,7 +366,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
             bw.write(jTextFieldPath.getText() + ";");
             bw.write(jTextFieldDatabaseName.getText() + ";");
             bw.write(jTextFieldUser.getText() + ";");
-            bw.write(jPasswordFieldPassword.getText());
+            bw.write(jPasswordFieldPassword.getSelectedText());
             bw.close();
             JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso");
         } catch (IOException e) {
@@ -375,7 +376,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
 
     private void jButtonGravarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGravarActionPerformed
         // TODO add your handling code here:
-        gravar();
+        gravar(this.dataConnection);
     }//GEN-LAST:event_jButtonGravarActionPerformed
 
     private void jButtonSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSairActionPerformed
@@ -387,24 +388,23 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
 
     private void jButtonTestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTestarActionPerformed
         // TODO add your handling code here:
-        serverName = jTextFieldServerName.getText();
-        port = jTextFieldConnectPort.getText();
-        path = jTextFieldPath.getText();
-        databaseName = jTextFieldDatabaseName.getText();
-        user = jTextFieldUser.getText();
-        password = jPasswordFieldPassword.getText();
-
-        DataConnection teste = new DataConnection(serverName, port, path, databaseName, user, password);
-        teste.conectar();
-        Connection conn = teste.getConnection();
+        this.dataConnection.setServerName(jTextFieldServerName.getText());
+        this.dataConnection.setPort(jTextFieldConnectPort.getText());
+        this.dataConnection.setPath(jTextFieldPath.getText());
+        this.dataConnection.setDatabaseName(jTextFieldDatabaseName.getText());
+        this.dataConnection.setUser(jTextFieldUser.getText());
+        this.dataConnection.setPassword(jPasswordFieldPassword.getSelectedText());
+       
+        dataConnection.conectar();
+        Connection conn = dataConnection.getConnection();
         
         JOptionPane.showMessageDialog(null, conn.toString() );
         try {
-            teste.conectar();
+            dataConnection.conectar();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         } finally {
-            teste.desconectar();
+            dataConnection.desconectar();
         }
     }//GEN-LAST:event_jButtonTestarActionPerformed
 
@@ -426,6 +426,9 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         
         try{
             file = chooser.getSelectedFile();
+            ObjectInputStream ow = new ObjectInputStream(new FileInputStream(file));
+            this.dataConnection = (DataConnection) ow.readObject();
+            System.out.println(">>>>>>>>>>>> " + dataConnection);
         }
         catch(Exception e){
             file = null;
