@@ -3,8 +3,12 @@ package br.com.textilregimara.model.data;
 import br.com.textilregimara.model.entities.to.DataConnectionTO;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,6 +33,20 @@ public class DataConnection implements Serializable {
     private Connection connection;
     
     public DataConnection(){
+        try{
+            FileInputStream fis = new FileInputStream("config");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            DataConnectionTO d = (DataConnectionTO) ois.readObject();
+            this.databaseName = d.getDatabaseName();
+            this.password = d.getPassword();
+            this.path = d.getPath();
+            this.port = d.getPort();
+            this.serverName = d.getServerName();
+            this.user = d.getUser();
+        }
+        catch(Exception e){
+            
+        }
     }
     
     public DataConnection(Object obj){

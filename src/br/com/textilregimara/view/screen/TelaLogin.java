@@ -7,6 +7,7 @@ package br.com.textilregimara.view.screen;
 
 import br.com.textilregimara.model.data.DataConnection;
 import br.com.textilregimara.model.entities.Login;
+import br.com.textilregimara.model.entities.to.DataConnectionTO;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import javax.swing.JOptionPane;
@@ -19,11 +20,12 @@ import java.io.ObjectInputStream;
  *
  * @author Administrador
  */
-
 public class TelaLogin extends javax.swing.JFrame {
 
-     public static String IMAGE_PATH = "/br/com/textilregimara/model/image/icon/";
-    
+    public static String IMAGE_PATH = "/br/com/textilregimara/model/image/icon/";
+    private DataConnectionTO dto;
+    private DataConnection dataConnection;
+
     /**
      * Creates new form Login
      */
@@ -163,13 +165,13 @@ public class TelaLogin extends javax.swing.JFrame {
     public void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(IMAGE_PATH + "icone.png")));
     }
-    
-    private void liberaBotaoEntrar(){
-        if(jLabelDadabaseName.getText().equals("NÃO CONFIGURADO")){
+
+    private void liberaBotaoEntrar() {
+        if (jLabelDadabaseName.getText().equals("NÃO CONFIGURADO")) {
             jButtonEntrar.setEnabled(false);
         }
     }
-    
+
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         // TODO add your handling code here:
         System.exit(0);
@@ -178,38 +180,36 @@ public class TelaLogin extends javax.swing.JFrame {
     private void jButtonEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEntrarActionPerformed
         // TODO add your handling code here:
         String nome = jTextFieldNomeUsuario.getText();
-        String senha = String.valueOf( jPasswordFieldSenha.getPassword());
-        Login l = new Login(nome,senha);
-        if(DoaLogin.selectUsuario(l)){
+        String senha = String.valueOf(jPasswordFieldSenha.getPassword());
+        Login l = new Login(nome, senha);
+        if (DoaLogin.selectUsuario(l)) {
             TelaPrincipal principal = new TelaPrincipal();
             principal.setVisible(true);
             this.dispose();
-        }
-        else{
+        } else {
             JOptionPane.showMessageDialog(null, "Erro ao fazer login");
-        }        
+        }
     }//GEN-LAST:event_jButtonEntrarActionPerformed
 
-    public void getDatabaseName(){
+    public void getDatabaseName() {
         String linha = "";
-        try{
-            
+        try {
+
             FileInputStream fileInputStram = new FileInputStream("config");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStram);
-            DataConnection dataConnection = (DataConnection) objectInputStream.readObject();
-            
+            dto = (DataConnectionTO) objectInputStream.readObject();
+            dataConnection = new DataConnection(dto);
+
             linha = "S:[" + dataConnection.getPath() + "] DB:[" + dataConnection.getDatabaseName() + "]";
             objectInputStream.close();
             fileInputStram.close();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             linha = "NÃO CONFIGURADO";
-        }
-        finally{
+        } finally {
             jLabelDadabaseName.setText(linha);
         }
     }
-    
+
     private void jButtonAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjudaActionPerformed
         TelaConfiguracaoSql configuracao = new TelaConfiguracaoSql();
         configuracao.setVisible(true);

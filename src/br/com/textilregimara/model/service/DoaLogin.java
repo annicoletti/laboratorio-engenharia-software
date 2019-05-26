@@ -16,7 +16,7 @@ public class DoaLogin {
 
     public static boolean selectUsuario(Login login){
         Connection connection = null;
-        DataConnection dataConnection = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dataConnection = new DataConnection();
         dataConnection.conectar();
         connection = dataConnection.getConnection();
         String sql = "Select nomeUsuario, senhausUario from Usuario where nomeUsuario = '"+ login.getNomeUsuario() +"';";

@@ -57,7 +57,4 @@ public class Login {
     public void setAdministrador(Boolean administrador) {
         this.administrador = administrador;
     }
-    
-    
-    
 }
