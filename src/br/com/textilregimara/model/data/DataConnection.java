@@ -14,7 +14,9 @@ import javax.swing.JOptionPane;
  *
  * @author NICOLETTI A.
  */
-public class DataConnection implements Serializable{
+public class DataConnection implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private String serverName;
     private String port;

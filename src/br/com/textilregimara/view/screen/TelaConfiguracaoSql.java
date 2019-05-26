@@ -5,16 +5,13 @@
  */
 package br.com.textilregimara.view.screen;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import br.com.textilregimara.model.data.DataConnection;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -332,49 +329,35 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }
 
     private void gravar(DataConnection obj, boolean auto) {
-        
+
         String file;
-        if(auto == false){
+        if (auto == false) {
             JFileChooser chooser = new JFileChooser("/home/nicoletti/projetos/");
             chooser.showSaveDialog(this);
             file = chooser.getSelectedFile().getAbsolutePath();
         } else {
             file = "config";
         }
-        
-        try {
 
+        try {
+            System.out.println("file: " + file);
             
-
-            System.out.println(">>> " + file);
-
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream out = new ObjectOutputStream(fos);
             out.writeObject(obj);
+            
+            JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso" + "\n\n Data: " + obj);
+            
             out.close();
-            JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso");
+            fos.close();
 
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
-        }
-    }
-
-    private void gravar(String local) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(local, false));
-            bw.write(jTextFieldServerName.getText() + ";");
-            bw.write(jTextFieldConnectPort.getText() + ";");
-            bw.write(jTextFieldPath.getText() + ";");
-            bw.write(jTextFieldDatabaseName.getText() + ";");
-            bw.write(jTextFieldUser.getText() + ";");
-            bw.write(jPasswordFieldPassword.getSelectedText());
-            bw.close();
-            JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
         }
     }
 
     private void jButtonGravarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGravarActionPerformed
+        makeTest();
         gravar(this.dataConnection, false);
     }//GEN-LAST:event_jButtonGravarActionPerformed
 
@@ -386,6 +369,10 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonSairActionPerformed
 
     private void jButtonTestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTestarActionPerformed
+        makeTest();
+    }//GEN-LAST:event_jButtonTestarActionPerformed
+
+    private void makeTest() throws HeadlessException {
         this.dataConnection.setServerName(jTextFieldServerName.getText());
         this.dataConnection.setPort(jTextFieldConnectPort.getText());
         this.dataConnection.setPath(jTextFieldPath.getText());
@@ -394,7 +381,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         this.dataConnection.setPassword(new String(jPasswordFieldPassword.getPassword()));
         
         System.out.println("[dataConnection] " + dataConnection);
-
+        
         try {
             dataConnection.conectar();
             Connection conn = dataConnection.getConnection();
@@ -405,64 +392,51 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         } finally {
             dataConnection.desconectar();
         }
-    }//GEN-LAST:event_jButtonTestarActionPerformed
+    }
 
     private void jMenuItemTestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemTestarActionPerformed
         jButtonTestarActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemTestarActionPerformed
 
     private void jMenuItemGravarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGravarActionPerformed
-        // TODO add your handling code here:
         jButtonGravarActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemGravarActionPerformed
 
     private void jMenuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirActionPerformed
-        // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(jMenuArquivo);
-        File file = null;
+        File file;
 
         try {
             file = chooser.getSelectedFile();
-            ObjectInputStream ow = new ObjectInputStream(new FileInputStream(file));
-            this.dataConnection = (DataConnection) ow.readObject();
-            System.out.println(">>>>>>>>>>>> " + dataConnection);
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
+            DataConnection dc = (DataConnection) objectInputStream.readObject();
+            
+            System.out.println("DC>>>> " + dc);
+            
+            completaCampos(dc);
         } catch (Exception e) {
             file = null;
-        }
-
-        if (file != null) {
-            completaCampos(file);
         }
     }//GEN-LAST:event_jMenuItemAbrirActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        // TODO add your handling code here:
         JOptionPane.showMessageDialog(null, "Configurador de Banco de dados 1.0\nMySQL\nPostgres");
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jButtonConfigurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigurarActionPerformed
+        makeTest();
         gravar(this.dataConnection, true);
-        //configurar();
     }//GEN-LAST:event_jButtonConfigurarActionPerformed
 
-    public void configurar() {
-        gravar("%homeDrive%conf.ini");
-    }
-
-    public void completaCampos(File file) {
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()));
-            String info[] = br.readLine().split(";");
-            jTextFieldServerName.setText(info[0]);
-            jTextFieldConnectPort.setText(info[1]);
-            jTextFieldPath.setText(info[2]);
-            jTextFieldDatabaseName.setText(info[3]);
-            jTextFieldUser.setText(info[4]);
-            jPasswordFieldPassword.setText(info[5]);
-            br.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    public void completaCampos(DataConnection dataConnection) {
+        if (dataConnection != null) {
+            jTextFieldServerName.setText(dataConnection.getServerName());
+            jTextFieldConnectPort.setText(dataConnection.getPort());
+            jTextFieldPath.setText(dataConnection.getPath());
+            jTextFieldDatabaseName.setText(dataConnection.getDatabaseName());
+            jTextFieldUser.setText(dataConnection.getUser());
+            jPasswordFieldPassword.setText(dataConnection.getPassword());
         }
     }
 
