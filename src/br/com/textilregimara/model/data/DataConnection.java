@@ -1,5 +1,6 @@
 package br.com.textilregimara.model.data;
 
+import br.com.textilregimara.model.entities.to.DataConnectionTO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,6 +29,18 @@ public class DataConnection implements Serializable {
     private Connection connection;
     
     public DataConnection(){
+    }
+    
+    public DataConnection(Object obj){
+        if(obj instanceof DataConnectionTO){
+            DataConnectionTO d = (DataConnectionTO) obj;
+            this.databaseName = d.getDatabaseName();
+            this.password = d.getPassword();
+            this.path = d.getPath();
+            this.port = d.getPort();
+            this.serverName = d.getServerName();
+            this.user = d.getUser();
+        }
     }
 
     public DataConnection(String serverName, String port, String path, String databaseName, String user, String password) {

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import br.com.textilregimara.model.data.DataConnection;
+import br.com.textilregimara.model.entities.to.DataConnectionTO;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.FileInputStream;
@@ -329,7 +330,8 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }
 
     private void gravar(DataConnection obj, boolean auto) {
-
+        DataConnectionTO dataConnectionTO = new DataConnectionTO(obj);
+        
         String file;
         if (auto == false) {
             JFileChooser chooser = new JFileChooser("/home/nicoletti/projetos/");
@@ -344,7 +346,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
             
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(fos);
-            out.writeObject(obj);
+            out.writeObject(dataConnectionTO);
             
             JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso" + "\n\n Data: " + obj);
             
@@ -410,11 +412,11 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         try {
             file = chooser.getSelectedFile();
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
-            DataConnection dc = (DataConnection) objectInputStream.readObject();
+            DataConnectionTO dc = (DataConnectionTO) objectInputStream.readObject();
             
             System.out.println("DC>>>> " + dc);
             
-            completaCampos(dc);
+            completaCampos(new DataConnection(dc));
         } catch (Exception e) {
             file = null;
         }
@@ -518,5 +520,4 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     private String user;
     private String password;
     private boolean teste = false;
-
 }
