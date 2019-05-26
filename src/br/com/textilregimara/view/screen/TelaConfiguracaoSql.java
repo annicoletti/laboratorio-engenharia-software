@@ -27,7 +27,8 @@ import java.io.ObjectOutputStream;
  */
 public class TelaConfiguracaoSql extends javax.swing.JFrame {
 
-    private DataConnection dataConnection;
+    private DataConnection dataConnection = new DataConnection();
+
     /**
      * Creates new form configuracaoSql
      */
@@ -326,35 +327,34 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    
     public void setIcon() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(TelaLogin.IMAGE_PATH + "icone.png")));
-    }    
-    
-    private void gravar(DataConnection obj) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.showSaveDialog(this);
+    }
 
-        String file = null;
+    private void gravar(DataConnection obj, boolean auto) {
         
-        try{
+        String file;
+        if(auto == false){
+            JFileChooser chooser = new JFileChooser("/home/nicoletti/projetos/");
+            chooser.showSaveDialog(this);
             file = chooser.getSelectedFile().getAbsolutePath();
-        }
-        catch(Exception e ){
-            file = null;
+        } else {
+            file = "config";
         }
         
-        if (file != null) {
-            try {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
-                
-                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-                out.writeObject(obj);
-                out.close();
-                JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso");
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
-            }
+        try {
+
+            
+
+            System.out.println(">>> " + file);
+
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            out.writeObject(obj);
+            out.close();
+            JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso");
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
         }
     }
 
@@ -375,8 +375,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }
 
     private void jButtonGravarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGravarActionPerformed
-        // TODO add your handling code here:
-        gravar(this.dataConnection);
+        gravar(this.dataConnection, false);
     }//GEN-LAST:event_jButtonGravarActionPerformed
 
     private void jButtonSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSairActionPerformed
@@ -387,20 +386,20 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonSairActionPerformed
 
     private void jButtonTestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTestarActionPerformed
-        // TODO add your handling code here:
         this.dataConnection.setServerName(jTextFieldServerName.getText());
         this.dataConnection.setPort(jTextFieldConnectPort.getText());
         this.dataConnection.setPath(jTextFieldPath.getText());
         this.dataConnection.setDatabaseName(jTextFieldDatabaseName.getText());
         this.dataConnection.setUser(jTextFieldUser.getText());
-        this.dataConnection.setPassword(jPasswordFieldPassword.getSelectedText());
-       
-        dataConnection.conectar();
-        Connection conn = dataConnection.getConnection();
+        this.dataConnection.setPassword(new String(jPasswordFieldPassword.getPassword()));
         
-        JOptionPane.showMessageDialog(null, conn.toString() );
+        System.out.println("[dataConnection] " + dataConnection);
+
         try {
             dataConnection.conectar();
+            Connection conn = dataConnection.getConnection();
+            dataConnection.conectar();
+            JOptionPane.showMessageDialog(null, conn.toString());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         } finally {
@@ -409,7 +408,6 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonTestarActionPerformed
 
     private void jMenuItemTestarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemTestarActionPerformed
-        // TODO add your handling code here:
         jButtonTestarActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemTestarActionPerformed
 
@@ -423,18 +421,17 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(jMenuArquivo);
         File file = null;
-        
-        try{
+
+        try {
             file = chooser.getSelectedFile();
             ObjectInputStream ow = new ObjectInputStream(new FileInputStream(file));
             this.dataConnection = (DataConnection) ow.readObject();
             System.out.println(">>>>>>>>>>>> " + dataConnection);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             file = null;
         }
-        
-        if(file != null){
+
+        if (file != null) {
             completaCampos(file);
         }
     }//GEN-LAST:event_jMenuItemAbrirActionPerformed
@@ -445,8 +442,8 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jButtonConfigurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfigurarActionPerformed
-        // TODO add your handling code here:
-        configurar();
+        gravar(this.dataConnection, true);
+        //configurar();
     }//GEN-LAST:event_jButtonConfigurarActionPerformed
 
     public void configurar() {

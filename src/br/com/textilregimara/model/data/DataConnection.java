@@ -23,7 +23,10 @@ public class DataConnection implements Serializable{
     private String user;
     private String password;
 
-    private Connection connection = null;
+    private Connection connection;
+    
+    public DataConnection(){
+    }
 
     public DataConnection(String serverName, String port, String path, String databaseName, String user, String password) {
         this.serverName = serverName;
@@ -113,7 +116,7 @@ public class DataConnection implements Serializable{
     }
 
     public void conectar() {
-        String url = "jdbc:" + this.serverName + "://" + this.path + ":" + this.port + "/" + this.databaseName + "?useSSL=false";
+        String url = "jdbc:" + this.serverName + "://" + this.path + ":" + this.port + "/" + this.databaseName;// + "?useSSL=false";
         try {
             connection = DriverManager.getConnection(url, this.user, this.password);
             //JOptionPane.showMessageDialog(null, "Conectado com sucesso no banco " + this.databaseName);
