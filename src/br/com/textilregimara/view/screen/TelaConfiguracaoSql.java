@@ -11,7 +11,7 @@ import java.sql.Connection;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import br.com.textilregimara.model.data.DataConnection;
-import br.com.textilregimara.model.entities.to.DataConnectionTO;
+import br.com.textilregimara.model.data.to.DataConnectionTO;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.FileInputStream;
@@ -33,6 +33,7 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
     public TelaConfiguracaoSql() {
         initComponents();
         setIcon();
+        completaCampos(dataConnection);
     }
 
     /**
@@ -439,6 +440,17 @@ public class TelaConfiguracaoSql extends javax.swing.JFrame {
             jTextFieldDatabaseName.setText(dataConnection.getDatabaseName());
             jTextFieldUser.setText(dataConnection.getUser());
             jPasswordFieldPassword.setText(dataConnection.getPassword());
+        } else {
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("config"));
+                if(!ois.equals(null)){
+                    DataConnection d = (DataConnection) ois.readObject();
+                    this.completaCampos(d);
+                }
+            } catch (Exception e) {
+                System.out.println("Deu Ruim");
+            }
+            
         }
     }
 

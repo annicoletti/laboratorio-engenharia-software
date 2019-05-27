@@ -1,14 +1,12 @@
 package br.com.textilregimara.model.service;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import br.com.textilregimara.model.data.DataConnection;
-import br.com.textilregimara.model.data.MapeamentoDB;
 import br.com.textilregimara.model.entities.Fornecedor;
 import br.com.textilregimara.model.entities.Registro;
 import br.com.textilregimara.model.enums.Operacao;
@@ -24,7 +22,7 @@ public class DoaLancamentos {
 
     public static List<Registro> getLancamentosCompleto(Fornecedor f) {
 
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
 
         List<Registro> resultado = new ArrayList<>();
@@ -54,7 +52,7 @@ public class DoaLancamentos {
 
     public static List<Registro> getLancamentos(Fornecedor f) {
 
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
 
         List<Registro> resultado = new ArrayList<>();
@@ -88,7 +86,7 @@ public class DoaLancamentos {
         int n = 0;
 
         if (r == 0) {
-            DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+            DataConnection dc = new DataConnection();
             dc.conectar();
             String sql = "delete from Lancamentos where idPessoa = ? ;";
 
@@ -110,7 +108,7 @@ public class DoaLancamentos {
     public static void deleteRegistroByIdWithoutConfirm(int id) {
 
         int n = 0;
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
         String sql = "delete from Lancamentos where idPessoa = ? ;";
 
@@ -128,7 +126,7 @@ public class DoaLancamentos {
 
     public static Double totalCredito(Integer idPessoa) {
         String sql = "select sum(valorLancamento) SOMA from Lancamentos where idOperacao = 2 and idPessoa = ?;";
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
         double total = 0;
         try {
@@ -148,7 +146,7 @@ public class DoaLancamentos {
 
     public static Double totalDebito(Integer idPessoa) {
         String sql = "select sum(valorLancamento) SOMA from Lancamentos where idOperacao = 1 and idPessoa = ?;";
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
         double total = 0;
         try {
@@ -170,7 +168,7 @@ public class DoaLancamentos {
         //call SP_InsertRegistro ('descricao','2010/12/30',100,3,1);
         String sql = "call SP_InsertRegistro (?,?,?,?,?,?);";
 
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
 
         try {
@@ -198,7 +196,7 @@ public class DoaLancamentos {
         String sql = "call SP_InsertRegistro (?,?,?,?,?,?);";
         List<Registro> registro = f.getRegistro();
 
-        DataConnection dc = new DataConnection(MapeamentoDB.CONF);
+        DataConnection dc = new DataConnection();
         dc.conectar();
 
         try {
@@ -216,7 +214,5 @@ public class DoaLancamentos {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 }

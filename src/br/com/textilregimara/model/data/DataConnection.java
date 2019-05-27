@@ -1,15 +1,12 @@
 package br.com.textilregimara.model.data;
 
-import br.com.textilregimara.model.entities.to.DataConnectionTO;
+import br.com.textilregimara.model.data.to.DataConnectionTO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,9 +16,9 @@ import javax.swing.JOptionPane;
  *
  * @author NICOLETTI A.
  */
-public class DataConnection implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class DataConnection {
+
+    private Connection connection;
 
     private String serverName;
     private String port;
@@ -30,10 +27,8 @@ public class DataConnection implements Serializable {
     private String user;
     private String password;
 
-    private Connection connection;
-    
-    public DataConnection(){
-        try{
+    public DataConnection() {
+        try {
             FileInputStream fis = new FileInputStream("config");
             ObjectInputStream ois = new ObjectInputStream(fis);
             DataConnectionTO d = (DataConnectionTO) ois.readObject();
@@ -43,14 +38,13 @@ public class DataConnection implements Serializable {
             this.port = d.getPort();
             this.serverName = d.getServerName();
             this.user = d.getUser();
-        }
-        catch(Exception e){
-            
+        } catch (Exception e) {
+            System.out.println("Sometimes bad things happen..");
         }
     }
-    
-    public DataConnection(Object obj){
-        if(obj instanceof DataConnectionTO){
+
+    public DataConnection(Object obj) {
+        if (obj instanceof DataConnectionTO) {
             DataConnectionTO d = (DataConnectionTO) obj;
             this.databaseName = d.getDatabaseName();
             this.password = d.getPassword();
@@ -67,7 +61,7 @@ public class DataConnection implements Serializable {
         this.path = path;
         this.databaseName = databaseName;
         this.user = user;
-        if(password.equals("")){
+        if (password.equals("")) {
             this.password = null;
         }
         this.password = password;
@@ -157,7 +151,7 @@ public class DataConnection implements Serializable {
             JOptionPane.showMessageDialog(null, "ERRO AO CONECTAR: " + ex.getMessage());
         }
     }
-    
+
     public void desconectar() {
         try {
             if (connection != null) {

@@ -7,9 +7,7 @@ package br.com.textilregimara.view.screen;
 
 import br.com.textilregimara.model.data.DataConnection;
 import br.com.textilregimara.model.entities.Login;
-import br.com.textilregimara.model.entities.to.DataConnectionTO;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import br.com.textilregimara.model.data.to.DataConnectionTO;
 import javax.swing.JOptionPane;
 import br.com.textilregimara.model.service.DoaLogin;
 import java.awt.Toolkit;
@@ -194,15 +192,14 @@ public class TelaLogin extends javax.swing.JFrame {
     public void getDatabaseName() {
         String linha = "";
         try {
-
-            FileInputStream fileInputStram = new FileInputStream("config");
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStram);
+            FileInputStream fileInputStream = new FileInputStream("config");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             dto = (DataConnectionTO) objectInputStream.readObject();
             dataConnection = new DataConnection(dto);
 
             linha = "S:[" + dataConnection.getPath() + "] DB:[" + dataConnection.getDatabaseName() + "]";
             objectInputStream.close();
-            fileInputStram.close();
+            fileInputStream.close();
         } catch (Exception e) {
             linha = "NÃO CONFIGURADO";
         } finally {
